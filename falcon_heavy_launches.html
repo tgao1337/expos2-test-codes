@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Falcon Heavy flights:</h2>
+
+<div id="demo">
+<!--
+<button type="button" onclick="test()">Change Content</button>
+-->
+<h4>Past flights:</h2>
+<p id="tit"></p>
+<h4>Upcoming flights:</h2>
+<p id="inf"></p>
+<p id="sped"></p>
+
+</div>
+
+
+
+<script>
+var xhr = new XMLHttpRequest();
+xhr.open('GET', "https://api.spacexdata.com/v3/launches?filter=rocket,details,mission_name,upcoming,launch_year,launch_site", true);
+xhr.send();
+
+xhr.onreadystatechange = processRequest;
+
+
+//function test() {
+//	console.log("test1");
+//	var xhr = new XMLHttpRequest();
+//	xhr.open('GET', "https://api.spacexdata.com/v3/roadster", true);
+//	xhr.send();
+//	xhr.onreadystatechange = processRequest;
+//}
+
+function processRequest(e) {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        var response = JSON.parse(xhr.responseText);
+        //console.log(response);
+        var str = "";
+        var nflights = "";
+        for(var i = 0; i < response.length; i++) {
+    		var obj = response[i];
+
+        	if (obj.rocket.rocket_id == "falconheavy" && !obj.upcoming){
+            	str = str + "<strong>" + obj.mission_name + "</strong> : " + obj.details + "<br><br>";
+        		//console.log(obj.mission_name);
+    			//console.log(obj.rocket.rocket_id);
+            }
+            if (obj.rocket.rocket_id == "falconheavy" && obj.upcoming){
+            	if(obj.details) {
+                	nflights = nflights + "<strong>" + obj.mission_name + "</strong> : " + obj.details + "<br><br>";
+                }
+                else {
+                	nflights = nflights + "<strong>" + obj.mission_name + "</strong> : Sometime " + obj.launch_year + "<br><br>";
+                }
+
+        		//console.log(obj.mission_name);
+    			//console.log(obj.rocket.rocket_id);
+                console.log(obj);
+            }
+
+		}
+        //console.log(response.earth_distance_km);
+        //console.log(response.speed_kph);
+        document.getElementById("tit").innerHTML = str;
+        document.getElementById("inf").innerHTML = nflights;
+        //document.getElementById("dis").innerHTML = "Current distance: " + response.earth_distance_km + "km from Earth";
+      //  document.getElementById("sped").innerHTML = "Current speed: " + response.speed_kph + "kph";
+    }
+}
+
+
+</script>
+
+</body>
+</html>
